@@ -88,7 +88,7 @@
 \let\@@magyar@captionfix\relax
 \makeatother
 
-\title[Mô hình khuếch tán xác suất]{Ước lượng ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo trong mô hình khuếch toán xác suất}
+\title[Mô hình khuếch tán xác suất]{Ước lượng ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo trong mô hình khuếch tán xác suất}
 
 \AtBeginSection[]
 {
@@ -180,6 +180,56 @@
         \end{equation*}
         với $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
         $(.)^2$ là bình phương từng phần tử của vector, $\boldsymbol{1}$ là vector mà các phần tử đều bằng một và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$
+    \end{dl}
+\end{frame}
+
+\begin{frame}
+    Ta thu được các lời giải tối ưu bằng cách giải hai bài toán:
+
+    \begin{equation} \label{eq:Arbitrary-Covariance-Optimize-Mean}
+        \text{Cho ma trận hiệp phương sai bất kỳ } \boldsymbol{\Sigma}_n, \max_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}}
+    \end{equation}
+
+    \begin{equation} \label{eq:Arbitrary-Mean-Optimize-Covariance}
+        \text{Cho trung bình bất kỳ } \boldsymbol{\mu}_n, \max_{\lbrace \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}}
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    \begin{dl}[Lời giải tối ưu của bài toán tối ưu duy nhất với trung bình] \label{dl:Solely-Optimal-Mean}
+        Với ma trận hiệp phương sai bất kỳ $\boldsymbol{\Sigma}_n$,
+        trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} luôn luôn là trung bình tối ưu trong công thức \ref{eq:Optimal-Mean}:
+
+        \begin{equation*}
+            \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
+        \end{equation*}
+
+        không ảnh hưởng đến $\boldsymbol{\Sigma}_n$.
+    \end{dl}
+\end{frame}
+
+\begin{frame}
+    \begin{equation} \label{eq:Estimated-Optimal-Mean}
+        \hat{\boldsymbol{\mu}}_n(\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \bold{x}_n - \sqrt{\overline{\beta}_n} \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n) \Big) \Bigg)
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    \begin{dl}[Lời giải tối ưu của bài toán tối ưu duy nhất với ma trận hiệp phương sai] \label{dl:Solely-Optimal-Covariance}
+        Ta giả định $\boldsymbol{\Sigma}_n = \mathrm{diag} \big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
+        Với trung bình bất kỳ $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ như trong công thức \ref{eq:Estimated-Optimal-Mean},
+        ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance} là:
+
+        \begin{equation*} \label{eq:Corrected-Optimal-Covariance}
+            \begin{aligned}
+                \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \underbrace{\big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n) \lbrack \boldsymbol{\epsilon}_n \rbrack} \big)^2}_{\mathrm{error}} \\
+                &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack
+            \end{aligned}
+        \end{equation*}
+
+        Với $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ là ma trận hiệp phương sai tối ưu của bài toán tối ưu hóa chung ở định lý \ref{dl:Optimal-Solution-To-Joint-Optimization},
+        $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
+        $(.)^2$ là bình phương từng phần tử của vector, $\boldsymbol{1}$ là vector mà các phần tử đều bằng một và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$.
     \end{dl}
 \end{frame}
 
