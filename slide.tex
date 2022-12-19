@@ -68,6 +68,7 @@
 \numberwithin{algocf}{section}
 \numberwithin{equation}{section}
 \numberwithin{dl}{section}
+\numberwithin{figure}{section}
 
 
 %\newcommand{\empy}[1]{{\color{darkorange}\emph{#1}}}
@@ -143,7 +144,21 @@
 
 \section{Tổng quan về mô hình khuếch tán xác suất}
 
-\subsection{Thật khó hiểu}
+\begin{frame}
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.9\textwidth]{generative-overview.png}
+        \caption{Tổng quát các mô hình sinh}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.9\textwidth]{Fixed_Forward_Diffusion_Process.png}
+        \caption{Minh họa một quá trình khuếch tán thuận và khuếch tán ngược}
+    \end{figure}
+\end{frame}
 
 \begin{frame}
     \begin{equation} \label{eq:ELBO-Maximization}
