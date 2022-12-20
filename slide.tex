@@ -144,15 +144,23 @@
 
 \section{Tổng quan về mô hình khuếch tán xác suất}
 
+\subsection{Tổng quan các mô hình sinh}
+
 \begin{frame}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.9\textwidth]{generative-overview.png}
-        \caption{Tổng quát các mô hình sinh}
+        \caption{Tổng quan các mô hình sinh}
     \end{figure}
 \end{frame}
 
 \begin{frame}
+
+    Quá trình khuếch tán gồm hai quá trình:
+    \begin{itemize}
+        \item Quá trình khuếch tán thuận: nhiễu được từ từ thêm vào dữ liệu qua từng bước cho đến khi dữ liệu trở thành nhiễu có phân phối Gaussian tiêu chuẩn
+        \item Quá trình khuếch tán ngược (quá trình khử nhiễu): sử dụng một mô hình được huấn luyện đảo ngược quá trình thuận (từ nhiễu trở thành dữ liệu)
+    \end{itemize}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.9\textwidth]{Fixed_Forward_Diffusion_Process.png}
@@ -161,11 +169,114 @@
 \end{frame}
 
 \begin{frame}
+    \begin{table}[h!]
+        \caption{Các ký hiệu được sử dụng trong đề tài}
+        \resizebox{\columnwidth}{!}{
+        \begin{tabular} [c c c] {m{4cm}  m{2.5cm}  m{8cm}}
+            \hline
+            \multirow{5}{4cm}{Quá trình khuếch tán thuận} & $\overline{\alpha}_n, \overline{\beta}_n$ & Biểu diễn tích lũy của nhiễu Gaussian tại bước thứ $n$, $q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0, \overline{\beta}_n \boldsymbol{I} \big)$ \\ \cline{2-3}
+            & $\lambda_n^2$ & Biểu diễn phương sai của quá trình khuếch tán ngược $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ \\ \cline{2-3}
+            & $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ & Biểu diễn trung bình của quá trình khuếch tán ngược $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ \\ \cline{2-3}
+            & $\gamma_n$ & Biểu diễn hệ số của $\boldsymbol{x}_0$ trong $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ \\ \cline{2-3}
+            & $\alpha_n, \beta_n$ & Biểu diễn lượng nhiễu Gaussian được thêm vào tại từng bước $n$ trong quá trình khuếch tán thuận, $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})=\mathcal{N}\big( \boldsymbol{x}_n \vert \sqrt{\alpha_n} \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)$ \\
+            \hline
+            \multirow{2}{4cm}{Trung bình của quá trình khuếch tán ngược} & $\boldsymbol{\mu}_n (\boldsymbol{x}_n), \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ & Biểu diễn trung bình của quá trình khuếch tán ngược $p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ và trung bình tối ưu \\ \cline{2-3}
+            & $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n), \hat{\boldsymbol{\mu}}_n (\boldsymbol{x}_n)$ & Biểu diễn mạng dự đoán nhiễu và ước lượng của $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ \\
+            \hline
+            \multirow{4}{4cm}{Ma trận hiệp phương sai của quá trình khuếch tán ngược} & $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n), \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ & Biểu diễn ma trận hiệp phương sai của quá trình khuếch tán ngược và ma trận hiệp phương sai đường chéo tối ưu \\ \cline{2-3}
+            & $\boldsymbol{h}_n (\boldsymbol{x}_n), \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2$ & Biểu diễn mạng dự đoán nhiễu bình phương SN và ước lượng của ma trận hiệp phương sai đường chéo tối ưu $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ \\ \cline{2-3}
+            & $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ & Biểu diễn ma trận hiệp phương sai đường chéo tối ưu với một trung bình không hoàn hảo \\ \cline{2-3}
+            & $\boldsymbol{g}_n (\boldsymbol{x}_n), \hat{\tilde{\boldsymbol{\sigma}}}_n^{\ast} (\boldsymbol{x}_n)^2$ & Biểu diễn mạng dự đoán phần dư NPR và ước lượng của $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ \\
+            \hline
+        \end{tabular}
+        }
+    \end{table}
+\end{frame}
+
+\begin{frame}
+    Mô hình toán học của quá trình khuếch tán thuận:
+    Cho một dãy các giá trị $\beta_1, \beta_2, \hdots, \beta_N \in (0, 1)$ là một dãy tăng (thường được đặt trước). $\alpha_n = 1 - \beta_n$. $\overline{\alpha}_n = \alpha_1 \alpha_2 \hdots \alpha_n$. $\overline{\beta}_n = 1 - \overline{\alpha}_n$
+
+    \begin{equation}
+        q(\boldsymbol{x}_{1:N}\vert \boldsymbol{x}_0) = \prod_{n=1}^N q(\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n-1})
+    \end{equation}
+
+    \begin{equation} \label{eq:Forward-Process}
+        q\big(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0 \big)=q\big( \boldsymbol{x}_N \vert \boldsymbol{x}_0 \big) \prod_{n=2}^{N} q\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0 \big)
+    \end{equation}
+
+    Quá trình khuếch tán thuận của DDPM là một quá trình Markov với chuyển tiếp Gaussian tuyến tính:
+
+    \begin{equation}
+        q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_{n-1} \big)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\alpha}_n \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)
+    \end{equation}
+
+    Sử dụng thủ thuật tái tham số hóa:
+
+    \begin{equation}
+        \boldsymbol{x}_n = \sqrt{\alpha_n} \boldsymbol{x}_{n-1} + \sqrt{\beta_n} \boldsymbol{\epsilon} \text{ với } \boldsymbol{\epsilon} \sim \mathcal{N} (\boldsymbol{\epsilon} \vert \boldsymbol{0}, \boldsymbol{I})
+    \end{equation}
+
+    
+
+\end{frame}
+
+\begin{frame}
+    Sử dụng tính chất cộng của hai biến ngẫu nhiên độc lập theo phân phối Gaussian tiêu chuẩn:
+
+    \begin{equation}
+        \boldsymbol{x}_n = \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_n} \boldsymbol{\epsilon}_n \text{ với } \boldsymbol{\epsilon}_n \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})
+    \end{equation}
+
+    \begin{equation}
+        q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0, \overline{\beta}_n \boldsymbol{I} \big)
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    Quá trình khuếch tán ngược:
+
+    \begin{equation} \label{eq:Reverse-Process}
+        p\big(\boldsymbol{x}_{0:N}\big)=p\big(\boldsymbol{x}_N\big)\prod_{n=1}^N p\big(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n\big)
+    \end{equation}
+    với
+    \begin{equation}
+        p\big(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n \big)=\mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_n \big( \boldsymbol{x}_n \big), \boldsymbol{\Sigma}_n \big( \boldsymbol{x}_n \big) \big)
+    \end{equation}
+
+    Sử dụng quy tắc Bayes, ta thu được quá trình khuếch tán ngược thực sự từ quá trình tán thuận:
+
+    \begin{equation} \label{eq:Groundtruth-Reverse-Process}
+        q\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0), \lambda_n^2 \boldsymbol{I} \big)
+    \end{equation}
+
+    \begin{equation}
+        \tilde{\boldsymbol{\mu}}_n \big( \boldsymbol{x}_n, \boldsymbol{x}_0 \big)=\sqrt{\overline{\alpha}_{n-1}}\boldsymbol{x}_0 + \sqrt{\overline{\beta}_{n-1} - \lambda_n^2}.\dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n}\boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}
+    \end{equation}
+
+    \begin{equation}
+        \lambda_n = \dfrac{\overline{\beta}_{n-1}}{\overline{\beta}_n}\beta_n \text{ (DDPM) \cite{ho2020denoising} và } \lambda_n = 0 \text{ DDIM \cite{song2020denoising}}
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N}\vert \boldsymbol{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
+
     \begin{equation} \label{eq:ELBO-Maximization}
         \max_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big)
     \end{equation}
+\end{frame}
+
+
+\begin{frame}
+    Khi sử dụng ma trận đẳng hướng, \cite{bao2021analytic} đã chỉ ra cả trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và phương sai tối ưu có dạng giải tích tương ứng với kỳ vọng có điều kiện của nhiễu $\mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack$:
+
     \begin{equation} \label{eq:Optimal-Mean}
         \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
+    \end{equation}
+
+    \begin{equation} \label{eq:Optimal-Isotropic-Variance}
+        \sigma_n^{\ast 2}=\lambda_n^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \Bigg( 1 - \mathbb{E}_{q(\boldsymbol{x}_n)} \dfrac{\lVert \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack\rVert_2^2}{d} \Bigg)
     \end{equation}
 \end{frame}
 
@@ -405,6 +516,11 @@
         \end{center}
         \label{table:FID-CIFAR10}
     \end{table}
+\end{frame}
+
+\section{Tài liệu tham khảo}
+\begin{frame}[allowframebreaks]{Tài liệu tham khảo}
+    \printbibliography
 \end{frame}
 
 \end{document}
