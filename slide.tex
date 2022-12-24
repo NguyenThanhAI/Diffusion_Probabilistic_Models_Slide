@@ -241,7 +241,7 @@
     \end{equation}
 \end{frame}
 
-\begin{frame}{Mô hình toán học của mô hình khuếch tán}
+\begin{frame}[shrink=20]{Mô hình toán học của mô hình khuếch tán}
     Quá trình khuếch tán ngược:
 
     \begin{equation} \label{eq:Reverse-Process}
@@ -263,7 +263,7 @@
     \end{equation}
 
     \begin{equation}
-        \lambda_n = \dfrac{\overline{\beta}_{n-1}}{\overline{\beta}_n}\beta_n \text{ (DDPM) \cite{ho2020denoising} và } \lambda_n = 0 \text{ DDIM \cite{song2020denoising}}
+        \lambda_n^2 = \dfrac{\overline{\beta}_{n-1}}{\overline{\beta}_n}\beta_n \text{ (DDPM) \cite{ho2020denoising} và } \lambda_n = 0 \text{ DDIM \cite{song2020denoising}}
     \end{equation}
 \end{frame}
 
@@ -509,7 +509,7 @@
 \end{frame}
 
 
-\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
+\begin{frame}[shrink=20]{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$;
@@ -527,7 +527,7 @@
 \end{frame}
 
 
-\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
+\begin{frame}[shrink=20]{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_1$ và mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_2$}
@@ -586,9 +586,9 @@
     \end{itemize}
 \end{frame}
 
-\section{Kết quả thực nghiệm}
+\subsection{Các tập dữ liệu}
 
-\begin{frame}
+\begin{frame}{Các tập dữ liệu}
     Các tập dữ liệu được sử dụng:
 
     \begin{itemize}
@@ -599,6 +599,107 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Frechet Inception Distance}
+
+\begin{frame}{Frechet Inception Distance}
+    Frechet Inception Distance (FID là một độ đo để đánh giá chất lượng của ảnh tạo ra bởi một mô hình sinh.
+    
+    FID so sánh phân phối của ảnh được tạo ra với phân phối của một tập các ảnh thực.
+
+    Khoảng cách Frechet của hai phân phối bất kỳ $\boldsymbol{\mu}, \boldsymbol{\nu} \in \mathbb{R}^n$ với trung bình và phương sai hữu hạn:
+    \begin{equation}
+        d_F (\boldsymbol{\mu}, \boldsymbol{\nu}) := \Big( \inf_{\boldsymbol{\gamma} \in \boldsymbol{\Gamma} (\boldsymbol{\mu}, \boldsymbol{\nu})} \int_{\mathbb{R}^n \times \mathbb{R}^n} \lVert \boldsymbol{x} - \boldsymbol{y} \rVert^2 d \boldsymbol{\gamma}(\boldsymbol{x}, \boldsymbol{y})  \Big)^{1/2}
+    \end{equation}
+    với $\boldsymbol{\Gamma} (\boldsymbol{\mu}, \boldsymbol{\nu}$ là tập tất cả các độ đo trên $\mathbb{R}^n \times \mathbb{R}^n$ với $\boldsymbol{\mu}$ và $\boldsymbol{\nu}$.
+\end{frame}
+
+\begin{frame}{Frechet Inception Distance}
+    Cho hai phân phối Gaussian nhiều chiều $\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})$ và $\mathcal{N}(\boldsymbol{\nu}, \boldsymbol{\Sigma}^{\prime})$, khoảng cách Frechet được tính là:
+
+    \begin{equation*}
+        d_F \big(\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma}), \mathcal{N}(\boldsymbol{\nu}, \boldsymbol{\Sigma}^{\prime}) \big) = \lVert \boldsymbol{\mu} - \boldsymbol{\nu} \rVert_2^2 + \mathrm{tr} \Big( \boldsymbol{\Sigma} + \boldsymbol{\Sigma}^{\prime} - 2\big( \boldsymbol{\Sigma}^{1/2} \boldsymbol{\Sigma}^{\prime} \boldsymbol{\Sigma}^{1/2}   \big)^{1/2} \Big)
+    \end{equation*}
+
+    Frechet Inception Score giữa hai tập ảnh (ảnh thật và ảnh được tạo từ mô hình sinh) được tính bằng cách cho hai tập qua mô hình Inception v3 được tiền huấn luyện trên tập ImageNet và lấy đến lớp AvgPool và áp dụng công thức trên.
+\end{frame}
+
+\subsection{$-L_{\mathrm{elbo}}$}
+
+\begin{frame}[shrink=20]{$-L_{\mathrm{elbo}}$}
+    \begin{equation*}
+        \begin{aligned}
+            \log p(\boldsymbol{x}) &= \log \int p(\boldsymbol{x}_{0:N}) d \boldsymbol{x}_{1:N} \\
+            &= \log \int \dfrac{p(\boldsymbol{x}_{0:N}) q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)}{q(\boldsymbol{x}_{1:N})} d \boldsymbol{x}_{1:N} \\
+            &= \log \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &\geq \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{\prod_{n=1}^N q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \prod_{n=2}^{N} p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})\prod_{n=1}^{N-1} q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= L_{\mathrm{elbo}}
+        \end{aligned}
+    \end{equation*}
+\end{frame}
+
+\subsection{Sinh dữ liệu trên quỹ đạo con}
+
+\begin{frame}{Sinh dữ liệu trên quỹ đạo con}
+    Để tăng tốc quá trình sinh dữ liệu, ta có thể đảo ngược một quá trình khuếch tán thuận ngắn hơn $q(\boldsymbol{x}_{\tau_0}, \dots, \boldsymbol{x}_{\tau_k} \vert \boldsymbol{x}_0)$ ràng buộc trên một quỹ đạo $1 \leq \tau_1 < \dots < \tau_K = N$ gồm $K$ bước thời gian \cite{song2020denoising}, \cite{bao2021analytic}:
+
+    \begin{equation*}
+        \begin{aligned}
+            & q(\boldsymbol{x}_{\tau_1}, \boldsymbol{x}_{\tau_2}, \dots, \boldsymbol{x}_{\tau_K} \vert \boldsymbol{x}_0) = q(\boldsymbol{x}_{\tau_K} \vert \boldsymbol{x}_0) \prod_{k=2}^K q(\boldsymbol{x}_{\tau_{k-1}} \vert \boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0) \\
+            & q(\boldsymbol{x}_{\tau_{k-1}} \vert \boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0) = \mathcal{N} \big( \boldsymbol{x}_{\tau_{k-1}} \vert \tilde{\boldsymbol{\mu}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0), \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{I} \big) \\
+            & \tilde{\boldsymbol{\mu}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0) = \sqrt{\overline{\alpha}_{\tau_{k-1}}} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_{\tau_{k-1}} - \lambda_{\tau_{k-1} \vert \tau_k}^2} \dfrac{\boldsymbol{x}_{\tau_k} - \sqrt{\overline{\alpha}_{\tau_k}}\boldsymbol{x}_0}{\sqrt{\overline{\beta}_{\tau_k}}}
+        \end{aligned}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{Sinh dữ liệu trên quỹ đạo con}
+    Tương tự như công thức \ref{eq:Reverse-Process}, mô hình Markov rút gọn để đảo ngược quá trình khuếch tán thuận được định nghĩa là:
+
+    \begin{equation*}
+        \begin{aligned}
+            & p(\boldsymbol{x}_0, \boldsymbol{x}_{\tau_1}, \dots, \boldsymbol{x}_{\tau_K}) = p(\boldsymbol{x}_{\tau_K}) \prod_{k=1}^K p(\boldsymbol{x}_{\tau_{k-1} \vert \tau_k}) \\
+            & p(\boldsymbol{x}_{\tau_{k-1} \vert \tau_k}) = \mathcal{N} \big( \boldsymbol{x}_{\tau_{k-1}} \vert \boldsymbol{\mu}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}), \boldsymbol{\Sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}) \boldsymbol{I} \big)
+        \end{aligned}
+    \end{equation*}
+
+\end{frame}
+
+\begin{frame}{Sinh dữ liệu trên quỹ đạo con}
+    Theo định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, khi $\boldsymbol{\Sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})=\mathrm{diag} \big( \boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 \big)$, hiệp phương sai tối ưu $\boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2$ là:
+
+    \begin{equation}
+        \boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \dfrac{\overline{\beta}_{\tau_k}}{\overline{\alpha}_{\tau_k}} \Big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_{\tau_k})} \lbrack \boldsymbol{\epsilon}_{\tau_k}^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_{\tau_k})} \lbrack \boldsymbol{\epsilon}_{\tau_k} \rbrack^2 \Big)
+    \end{equation}
+
+    với $\boldsymbol{\epsilon}_{\tau_k}=\dfrac{\boldsymbol{x}_{\tau_k} - \sqrt{\overline{\alpha}_{\tau_k}} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_{\tau_k}}}$ là nhiễu để tạo ra $\boldsymbol{x}_{\tau_k}$ từ $\boldsymbol{x}_0$ và $\gamma_{\tau_{k-1} \vert \tau_k}=\sqrt{\overline{\alpha}_{\tau_{k-1}}} - \sqrt{\overline{\beta}_{\tau_{k-1}} - \lambda_{\tau_{k-1} \vert \tau_k}^2} \sqrt{\dfrac{\overline{\alpha}_{\tau_k}}{\overline{\beta}_{\tau_k}}}$.
+\end{frame}
+
+\begin{frame}{Sinh dữ liệu trên quỹ đạo con}
+    Vì vậy ta có thể sử dụng mạng dự đoán nhiễu bình phương $\boldsymbol{h}_n(\boldsymbol{x}_n)$ được luấn luyện trên hàm mục tiêu ở công thức \ref{eq:Square-Noise-Prediction-Network-MSE-Loss} và ước lượng của $\boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2$ bằng công thức:
+
+    \begin{equation}        
+        \hat{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \dfrac{\overline{\beta}_{\tau_k}}{\overline{\alpha}_{\tau_k}} \big( \boldsymbol{h}_{\tau_k} (\boldsymbol{x}_{\tau_k}) - \hat{\boldsymbol{\epsilon}}_{\tau_k} (\boldsymbol{x}_{\tau_k})^2 \big)
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}{Sinh dữ liệu trên quỹ đạo con}
+    Khi xét tới trung bình không hoàn hảo (khi xét sai lệch của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$), tương ứng với định lý \ref{dl:Solely-Optimal-Covariance}, hiệp phương sai tối ưu hiệu chỉnh là $\tilde{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2$ là:
+
+    \begin{equation}
+        \tilde{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \dfrac{\overline{\beta}_{\tau_k}}{\overline{\alpha}_{\tau_k}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_{\tau_k})} \big \lbrack \big(\boldsymbol{\epsilon}_{\tau_k} - \hat{\boldsymbol{\epsilon}}_{\tau_k} (\boldsymbol{x}_{\tau_k}) \big)^2 \rbrack
+    \end{equation}
+    
+    Vì vậy ta sử dụng mạng dự đoán phần dư nhiễu bình phương $\boldsymbol{g}_n (\boldsymbol{x}_n)$ được huấn luyện trên hàm mục tiêu ở công thức \ref{eq:Square-Noise-Prediction-Network-MSE-Loss} và ước lượng của $\tilde{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2$ là:
+
+    \begin{equation}
+        \hat{\tilde{\boldsymbol{\sigma}}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{g}_{\tau_k} (\boldsymbol{x}_{\tau_k})
+    \end{equation}
+
+\end{frame}
+
+\section{Kết quả thực nghiệm}
 
 \begin{frame}
     \begin{table}[h!]
@@ -755,7 +856,7 @@
 \end{frame}
 
 \section{Tài liệu tham khảo}
-\begin{frame}[allowframebreaks]{Tài liệu tham khảo}
+\begin{frame}[shrink=20]{Tài liệu tham khảo}
     \printbibliography
 \end{frame}
 
