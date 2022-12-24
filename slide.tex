@@ -146,7 +146,7 @@
 
 \subsection{Tổng quan các mô hình sinh}
 
-\begin{frame}
+\begin{frame}{Tổng quan các mô hình sinh}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.9\textwidth]{generative-overview.png}
@@ -154,7 +154,9 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}
+\subsection{Mô hình toán học của mô hình khuếch tán}
+
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
 
     Quá trình khuếch tán gồm hai quá trình:
     \begin{itemize}
@@ -279,7 +281,7 @@
             $\boldsymbol{x}_n \gets \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_n} \boldsymbol{\epsilon}$\;
             Chỉnh định $\boldsymbol{\theta}$ dựa trên đạo hàm riêng $\nabla_{\boldsymbol{\theta}}  \lVert \boldsymbol{\epsilon}^2 - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \rVert_2^2$
         }
-        \caption{Thủ tục huấn luyện VDM}
+        \caption{Thủ tục huấn luyện DPM}
         \label{alg:Learning-of-VDM}
     \end{algorithm}
 \end{frame}
@@ -298,7 +300,7 @@
         $\boldsymbol{x}_{n-1} \gets \dfrac{1}{\sqrt{\alpha_n}} \Big( \boldsymbol{x}_n - \dfrac{1 - \alpha_n}{\sqrt{1 - \overline{\alpha}_n}} \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \Big) + \lambda_n \boldsymbol{\epsilon}$\;
         }
         \Return{$\boldsymbol{x}_0$}\;
-        \caption{Thủ tục lấy mẫu từ một VDM đã được huấn luyện}
+        \caption{Thủ tục lấy mẫu từ một DPM đã được huấn luyện}
         \label{alg:Sampling-of-VDM}
     \end{algorithm}
 \end{frame}
@@ -328,6 +330,10 @@
         \min_{\lbrace \hat{\boldsymbol{\epsilon}}_n  \rbrace_{n=1}^N} \mathbb{E}_n  \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \rVert_2^2
     \end{equation}
 \end{frame}
+
+\section{Phương pháp đề xuất}
+
+\subsection{ Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
 
 \begin{frame}
     \begin{dl}[Nghiệm tối ưu cho bài toán tối ưu hóa chung] \label{dl:Optimal-Solution-To-Joint-Optimization}
@@ -369,6 +375,9 @@
     \begin{equation} \label{eq:Sigma-SN-SPM}
         \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2 = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \boldsymbol{h}_n (\boldsymbol{x}_n) - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big)
     \end{equation}
+
+    Trong tiểu luận ta gọi mô hình này là SN-DPM.
+
 \end{frame}
 
 \begin{frame}
@@ -406,6 +415,9 @@
         \label{alg:Sampling-of-SN}
     \end{algorithm}
 \end{frame}
+
+
+\subsection{Ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo}
 
 \begin{frame}
     Không thể tính toán chính xác hai đại lương $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ do có thành phần kỳ vọng có điều kiện trên hàm của nhiễu $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$.
@@ -488,7 +500,7 @@
         \hat{\tilde{\boldsymbol{\sigma}}}_n (\boldsymbol{x}_n)^2 = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \boldsymbol{g}_n (\boldsymbol{x}_n)
     \end{equation}
 
-    Trong tiểu luận ta gọi ước lượng này là SNR-DPM.
+    Trong tiểu luận ta gọi mô hình này là SNR-DPM.
 \end{frame}
 
 
@@ -530,6 +542,10 @@
     \end{algorithm}
 \end{frame}
 
+\section{Thực thi}
+
+\subsection{Chia sẻ tham số và suy luận hiệu quả}
+
 \begin{frame}
     SN-DPM và NPR-DPM cần được chạy cả hai mạng.
 
@@ -547,6 +563,8 @@
     $\mathrm{NN}_1$ và $\mathrm{NN}_2$ là hai mạng nhỏ bao gồm một vài lớp tích chập và được tham số hóa bởi $\boldsymbol{\phi}_1$ và $\boldsymbol{\phi}_2$ tương ứng.
 \end{frame}
 
+\subsection{1 Quá trình học hai giai đoạn và tiền huấn luyện}
+
 \begin{frame}
     Quá trình huấn luyện được chia làm hai giai đoạn:
     \begin{itemize}
@@ -562,6 +580,8 @@
         \end{equation}
     \end{itemize}
 \end{frame}
+
+\section{Kết quả thực nghiệm}
 
 \begin{frame}
     \begin{table}[h!]
