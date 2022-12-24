@@ -170,7 +170,13 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
+    Ví dụ quá trình sinh ảnh từ nhiễu:
+    
+    \url{https://minibatchai.com/assets/Diffusion/ddpm-grid.gif}
+\end{frame}
+
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     \begin{table}[h!]
         \caption{Các ký hiệu được sử dụng trong đề tài}
         \resizebox{\columnwidth}{!}{
@@ -195,7 +201,7 @@
     \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     Mô hình toán học của quá trình khuếch tán thuận:
     Cho một dãy các giá trị $\beta_1, \beta_2, \hdots, \beta_N \in (0, 1)$ là một dãy tăng (thường được đặt trước). $\alpha_n = 1 - \beta_n$. $\overline{\alpha}_n = \alpha_1 \alpha_2 \hdots \alpha_n$. $\overline{\beta}_n = 1 - \overline{\alpha}_n$
 
@@ -223,7 +229,7 @@
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     Sử dụng tính chất cộng của hai biến ngẫu nhiên độc lập theo phân phối Gaussian tiêu chuẩn:
 
     \begin{equation}
@@ -235,7 +241,7 @@
     \end{equation}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     Quá trình khuếch tán ngược:
 
     \begin{equation} \label{eq:Reverse-Process}
@@ -261,7 +267,7 @@
     \end{equation}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N}\vert \boldsymbol{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
 
     \begin{equation} \label{eq:ELBO-Maximization}
@@ -270,7 +276,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\theta}$}
@@ -286,7 +292,7 @@
     \end{algorithm}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ và tham số đã được huấn luyện $\boldsymbol{\theta}$}
@@ -305,7 +311,7 @@
     \end{algorithm}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
     Khi sử dụng ma trận đẳng hướng, \cite{bao2021analytic} đã chỉ ra cả trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và phương sai tối ưu có dạng giải tích tương ứng với kỳ vọng có điều kiện của nhiễu $\mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack$:
 
     \begin{equation} \label{eq:Optimal-Mean}
@@ -317,7 +323,7 @@
     \end{equation}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mô hình toán học của mô hình khuếch tán}
 
     \cite{ho2020denoising} ước lượng $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ sử dụng một mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$:
     \begin{equation} \label{eq:Estimated-Optimal-Mean}
@@ -333,9 +339,9 @@
 
 \section{Phương pháp đề xuất}
 
-\subsection{ Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
+\subsection{Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
 
-\begin{frame}
+\begin{frame}{Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
     \begin{dl}[Nghiệm tối ưu cho bài toán tối ưu hóa chung] \label{dl:Optimal-Solution-To-Joint-Optimization}
         Với ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
         Khi đó trung bình tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ được nêu trong công thức \ref{eq:Optimal-Mean},
@@ -350,7 +356,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}{Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
     Để ước lượng ma trận hiệp phương sai tối ưu $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, ta cần phải ước lượng cả hai đại lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$.
     
     Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ có mục đích ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE trong công thức \ref{eq:Noise-Prediction}.
@@ -358,7 +364,7 @@
     $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ để ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$.
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
     $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$ là kỳ vọng có điều kiện của bình phương của nhiễu (SN) $\boldsymbol{\epsilon}_n^2$ điều kiện trên $\boldsymbol{x}_n$.
 
     Đại lượng kỳ vọng này có thể được ước lượng sử dụng mạng $\boldsymbol{h}_n (\boldsymbol{x}_n) \in \mathbb{R}^d$ được huấn luyện trên hàm mục tiêu MSE:
@@ -380,7 +386,7 @@
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán bình phương nhiễu (SN) $\boldsymbol{h}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$}
@@ -396,7 +402,7 @@
     \end{algorithm}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Lời giải tối ưu cho ma trận hiệp phương sai đường chéo}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_1$ và mạng dự đoán bình phương nhiễu (SN) $\boldsymbol{h}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_2$}
@@ -419,7 +425,7 @@
 
 \subsection{Ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo}
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     Không thể tính toán chính xác hai đại lương $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ do có thành phần kỳ vọng có điều kiện trên hàm của nhiễu $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$.
 
 
@@ -429,10 +435,9 @@
         L_{\mathrm{elbo}}\big( \hat{\boldsymbol{\mu}}_n, \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2 \big) \leq \max_{\boldsymbol{\sigma}_n (.)^2 } L_{\mathrm{elbo}} \big( \hat{\boldsymbol{\mu}}_n, \boldsymbol{\sigma}_n (.)^2 \big)
     \end{equation}
 
-    Và dấu bằng về cơ bản không xảy ra.
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     Ta thu được các lời giải tối ưu bằng cách giải hai bài toán:
 
     \begin{equation} \label{eq:Arbitrary-Covariance-Optimize-Mean}
@@ -445,7 +450,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     \begin{dl}[Lời giải tối ưu của bài toán tối ưu duy nhất với trung bình] \label{dl:Solely-Optimal-Mean}
         Với ma trận hiệp phương sai bất kỳ $\boldsymbol{\Sigma}_n$,
         trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} luôn luôn là trung bình tối ưu trong công thức \ref{eq:Optimal-Mean}:
@@ -460,7 +465,7 @@
 
 
 
-\begin{frame}
+\begin{frame}[shrink=20]{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     \begin{dl}[Lời giải tối ưu của bài toán tối ưu duy nhất với ma trận hiệp phương sai] \label{dl:Solely-Optimal-Covariance}
         Ta giả định $\boldsymbol{\Sigma}_n = \mathrm{diag} \big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
         Với trung bình bất kỳ $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ như trong công thức \ref{eq:Estimated-Optimal-Mean},
@@ -480,7 +485,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     Công thức \ref{eq:Corrected-Optimal-Covariance}, ma trận hiệp phương sai tối ưu đã được hiệu chỉnh $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ được xác định qua $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack$.
     
     Ta học đại lượng này bằng cách huấn luyện một mạng $\boldsymbol{g}_n (\boldsymbol{x}_n) \in \mathbb{R}^d$ dự đoán $\big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2$ khi biết $\boldsymbol{x}_n$ bằng cách cực tiểu hóa hàm mục tiêu MSE:
@@ -492,7 +497,7 @@
     Với $n$ được lấy mẫu theo phân phối đều từ $\lbrace 1, 2, \dots, N \rbrace$.
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     Với mạng dự đoán phần dư nhiễu $\boldsymbol{g}_n (\boldsymbol{x}_n)$ trong công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss},
     ta ước lượng $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ bằng công thức:
 
@@ -504,7 +509,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$;
@@ -522,7 +527,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}{Ma trận hiệp phương sai tối ưu với trung bình không \\ hoàn hảo}
     \begin{algorithm}[H]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_1$ và mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_2$}
@@ -546,7 +551,7 @@
 
 \subsection{Chia sẻ tham số và suy luận hiệu quả}
 
-\begin{frame}
+\begin{frame}{Chia sẻ tham số và suy luận hiệu quả}
     SN-DPM và NPR-DPM cần được chạy cả hai mạng.
 
     Để giảm chi phí tính toán, ta sử dụng phương pháp chia sẻ tham số giữa hai mạng như sau:
@@ -563,9 +568,9 @@
     $\mathrm{NN}_1$ và $\mathrm{NN}_2$ là hai mạng nhỏ bao gồm một vài lớp tích chập và được tham số hóa bởi $\boldsymbol{\phi}_1$ và $\boldsymbol{\phi}_2$ tương ứng.
 \end{frame}
 
-\subsection{1 Quá trình học hai giai đoạn và tiền huấn luyện}
+\subsection{Quá trình học hai giai đoạn và tiền huấn luyện}
 
-\begin{frame}
+\begin{frame}{Quá trình học hai giai đoạn và tiền huấn luyện}
     Quá trình huấn luyện được chia làm hai giai đoạn:
     \begin{itemize}
         \item Trong giai đoạn đầu tiên, ta học trung bình bằng cách huấn luyện mạng dự đoán nhiễu ở công thức \ref{eq:Noise-Prediction},
@@ -584,12 +589,21 @@
 \section{Kết quả thực nghiệm}
 
 \begin{frame}
+    Các tập dữ liệu được sử dụng:
+
+    \begin{itemize}
+        \item CIFAR10 (64x64)
+        \item CelebA (64x64)
+        \item ImageNet64 (64x64)
+        \item LSUN Bedroom (128x128)
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
     \begin{table}[h!]
         %\small
         %\centering
-        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET). A-DPM ký hiệu của Analytic-DPM. 
-        Ta cần chú ý rằng chi phí thời gian tăng thêm của mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN là không đáng kể trên tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64
-        (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}). Ta có thể sử dụng số bước để so sánh tính hiệu quả của các phương pháp}
         \resizebox{\columnwidth}{!}{
             \begin{tabular}{ lrrrrrrrrrrrrr  }
                 \hline
@@ -609,6 +623,8 @@
                 \hline
             \end{tabular}
         }
+        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET).
+        Thực hiện trên tập CIFAR10 với LS và CS}
     \end{table}
 \end{frame}
 
@@ -616,9 +632,6 @@
     \begin{table}[h!]
         %\small
         %\centering
-        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET). A-DPM ký hiệu của Analytic-DPM. 
-        Ta cần chú ý rằng chi phí thời gian tăng thêm của mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN là không đáng kể trên tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64
-        (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}). Ta có thể sử dụng số bước để so sánh tính hiệu quả của các phương pháp}
         \resizebox{\columnwidth}{!} {
             \begin{tabular}{ lrrrrrrrrrrrrr  }
                 \hline
@@ -638,6 +651,8 @@
                 \hline
             \end{tabular}
         }
+        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET).
+        Thực hiện trên tập CelebA và ImageNet}
     \end{table}
 \end{frame}
 
@@ -645,9 +660,6 @@
     \begin{table}[h!]
         %\small
         %\centering
-        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET). A-DPM ký hiệu của Analytic-DPM. 
-        Ta cần chú ý rằng chi phí thời gian tăng thêm của mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN là không đáng kể trên tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64
-        (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}). Ta có thể sử dụng số bước để so sánh tính hiệu quả của các phương pháp}
         \begin{center}
             \resizebox{9.5cm}{!}{
                 \begin{tabular}{ lrrrrrr  }
@@ -665,15 +677,13 @@
                 \end{tabular}
             }
         \end{center}
+        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET).
+        Thực hiện trên tập CIFAR10 sử dụng VP SDE}
     \end{table}
 \end{frame}
 
 \begin{frame}
     \begin{table}[h!]
-        \caption{Số bước nhỏ nhất để đạt được khoảng cách FID khoảng bằng 6.
-        Chi phí thời gian trong từng bước cho từng phương pháp xem như là như nhau.
-        Phương pháp của ta có thêm mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN vì vậy sẽ tăng thêm chi phí thời gian.
-        Ta nhân kết quả với tỷ lệ chi phí thời gian trên từng bước so với các phương pháp được so sánh}
         \begin{center}
             \resizebox{11cm}{!}{
                 \begin{tabular}{ lrrr}
@@ -690,15 +700,16 @@
                 \end{tabular}
             }
         \end{center}
+        \caption{Số bước nhỏ nhất để đạt được khoảng cách FID khoảng bằng 6.
+        Chi phí thời gian trong từng bước cho từng phương pháp xem như là như nhau.
+        Phương pháp của ta có thêm mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN vì vậy sẽ tăng thêm chi phí thời gian.
+        Ta nhân kết quả với tỷ lệ chi phí thời gian trên từng bước so với các phương pháp được so sánh.}
         \label{table:Smallest-steps-to-achieved-FID-6}
     \end{table}
 \end{frame}
 
 \begin{frame}
     \begin{table}[h!]
-        \caption{Cận trên ($-L_{\mathrm{elbo}}$) của log-likelihood âm.
-        A-DPM là ký hiệu của Analytic-DPM. Cần chú ý rằng chi phí tính toán được thêm vào là không đáng kể trên các tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64.
-        Vì vậy ta có thể sử dụng số bước thời gian để so sánh độ hiệu quả của các phương pháp. Để giảm ảnh hưởng của tính ngẫu nhiên, ta cũng lặp lại với cấu hình số bước thời gian nhiều nhất và phương sai sẽ được đề cập ở phần phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}.}
         \begin{center}
             \resizebox{\columnwidth}{!}{
                 \begin{tabular}{llrrrrrrrrrrrrr}
@@ -737,6 +748,8 @@
                 \end{tabular}
             }
         \end{center}
+        \caption{Cận trên ($-L_{\mathrm{elbo}}$) của log-likelihood âm.
+        A-DPM là ký hiệu của Analytic-DPM. Thực hiện trên các tập CIFAR10, CelebA, ImageNet}
         \label{table:Upper-Bound}
     \end{table}
 \end{frame}
