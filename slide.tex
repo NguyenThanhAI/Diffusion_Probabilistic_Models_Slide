@@ -42,7 +42,8 @@
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 %\usepackage{algorithm}
 %\usepackage{algorithmic}
-\usepackage{caption}
+%\usepackage{caption}
+\usepackage[font=scriptsize,justification=centering]{caption}
 %\usepackage{xcolor}
 \usepackage{array}
 %\renewcommand{\thealgocf}{}
@@ -701,7 +702,7 @@
 
 \section{Kết quả thực nghiệm}
 
-\begin{frame}
+\begin{frame}{Kết quả thực nghiệm}
     \begin{table}[h!]
         %\small
         %\centering
@@ -729,7 +730,7 @@
     \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Kết quả thực nghiệm}
     \begin{table}[h!]
         %\small
         %\centering
@@ -757,7 +758,7 @@
     \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Kết quả thực nghiệm}
     \begin{table}[h!]
         %\small
         %\centering
@@ -783,7 +784,7 @@
     \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Kết quả thực nghiệm}
     \begin{table}[h!]
         \begin{center}
             \resizebox{11cm}{!}{
@@ -809,7 +810,7 @@
     \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Kết quả thực nghiệm}
     \begin{table}[h!]
         \begin{center}
             \resizebox{\columnwidth}{!}{
@@ -853,6 +854,14 @@
         A-DPM là ký hiệu của Analytic-DPM. Thực hiện trên các tập CIFAR10, CelebA, ImageNet}
         \label{table:Upper-Bound}
     \end{table}
+\end{frame}
+
+\begin{frame}{Kết quả thực nghiệm}
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.45]{cifar10_sn_ddpm_cs.png}
+        \caption{Một số ảnh được sinh từ quá trình huấn luyện SN-DPM trên tập CIFAR10 với lịch trình phương sai CS.}
+    \end{figure}
 \end{frame}
 
 \section{Tài liệu tham khảo}
